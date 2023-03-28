@@ -92,14 +92,14 @@ function CampaignDetails() {
           <Grid item md={12}>
             <Card sx={{ maxWidth: 800 }}>
               <CardHeader
-                avatar={<Avatar src={userId.imageURL} aria-label="recipe" />}
+                avatar={<Avatar src={userId ? userId.imageURL : ""} aria-label="recipe" />}
                 action={
                   <IconButton aria-label="settings">
                     <MoreVertIcon />
                   </IconButton>
                 }
                 title={title}
-                subheader={`${userId.firstName} ${userId.lastName}`}
+                subheader={`${userId ? userId.firstName : "" } ${userId ? userId.lastName : ""}`}
                 sx={{ mb: '1rem', fontWeight: 'lighter' }}
               />
               <CardMedia component="img" height="300" image={imageURL} alt="Paella dish" />
