@@ -1,21 +1,32 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { login } from '../../../redux/actions';
+
 // components
 import Iconify from '../../../components/iconify';
-
 // ----------------------------------------------------------------------
+
 
 export default function LoginForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
 
   const handleClick = () => {
+    dispatch(login({
+        email : "xyz@gmail.com",
+        password : "12345"
+    }));
     navigate('/dashboard', { replace: true });
   };
+
+  
 
   return (
     <>

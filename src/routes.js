@@ -9,6 +9,11 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import CreateCampaign from './pages/CreateCampaign';
+import AllCampaign from './pages/AllCampaign';
+import CampaiagnDetails from './pages/CampaignDetails';
+import MyCampaigns from './pages/MyCampaigns';
+import MyFundings from './pages/MyFundings';
 
 // ----------------------------------------------------------------------
 
@@ -18,11 +23,17 @@ export default function Router() {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/dashboard/allcampaigns" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
+        { path: 'createcampaign', element: <CreateCampaign /> },
+        { path: 'allcampaigns', element: <AllCampaign /> },
+        { path: 'campaigndetails', element: <CampaiagnDetails /> },
+        { path: 'mycampaigns', element: <MyCampaigns /> },
+        { path: 'myfundings', element: <MyFundings /> },
+       
       ],
     },
     {
@@ -32,7 +43,7 @@ export default function Router() {
     {
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/login" />, index: true },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],

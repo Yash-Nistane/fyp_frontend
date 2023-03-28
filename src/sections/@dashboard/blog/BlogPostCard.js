@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
 import { Box, Link, Card, Grid, Avatar, Typography, CardContent } from '@mui/material';
@@ -8,6 +9,7 @@ import { fShortenNumber } from '../../../utils/formatNumber';
 //
 import SvgColor from '../../../components/svg-color';
 import Iconify from '../../../components/iconify';
+
 
 // ----------------------------------------------------------------------
 
@@ -52,19 +54,27 @@ const StyledCover = styled('img')({
 // ----------------------------------------------------------------------
 
 BlogPostCard.propTypes = {
-  post: PropTypes.object.isRequired,
+  campaign: PropTypes.object.isRequired,
   index: PropTypes.number,
 };
 
-export default function BlogPostCard({ post, index }) {
-  const { cover, title, view, comment, share, author, createdAt } = post;
-  const latestPostLarge = index === 0;
-  const latestPost = index === 1 || index === 2;
+export default function BlogPostCard({ campaign, index }) {
+  const { title, dateCreated, imageURL, view, comment, share, createdAt, _id } = campaign;
+  const navigate = useNavigate();
+  const latestPostLarge = false;
+  const latestPost = false;
+
+  const author = {
+    name: 'Yash Nistane',
+    avatarUrl: `/assets/images/avatars/avatar_${index + 1}.jpg`,
+  };
+
+  const cover = imageURL;
 
   const POST_INFO = [
-    { number: comment, icon: 'eva:message-circle-fill' },
-    { number: view, icon: 'eva:eye-fill' },
-    { number: share, icon: 'eva:share-fill' },
+    { number: 23, icon: 'eva:message-circle-fill' },
+    { number: 20, icon: 'eva:eye-fill' },
+    { number: 12, icon: 'eva:share-fill' },
   ];
 
   return (
@@ -132,7 +142,7 @@ export default function BlogPostCard({ post, index }) {
           }}
         >
           <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
-            {fDate(createdAt)}
+            {dateCreated}
           </Typography>
 
           <StyledTitle
@@ -143,8 +153,13 @@ export default function BlogPostCard({ post, index }) {
               ...(latestPostLarge && { typography: 'h5', height: 60 }),
               ...((latestPostLarge || latestPost) && {
                 color: 'common.white',
+                
               }),
+              cursor:"pointer"
             }}
+            // href={"/dashboard/campaigndetails?campaignId=12"}
+            // target="_self"
+            onClick={() => {navigate(`/dashboard/campaigndetails?campaignId=${_id}`)}}
           >
             {title}
           </StyledTitle>
