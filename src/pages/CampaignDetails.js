@@ -18,9 +18,11 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { LoadingButton } from '@mui/lab';
 import { Helmet } from 'react-helmet-async';
 import { Container, Grid } from '@mui/material';
+import { ethers } from 'ethers';
 import { useDispatch, useSelector } from 'react-redux';
 import { bidCampaign, getCampaignById } from '../redux/actions';
 import CustomInput from '../components/customInput/CustomInput';
+import { auctionABI } from './exportAbi';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -57,7 +59,8 @@ function CampaignDetails() {
     maxEquityToDilute,
     dateCreated,
     milestones,
-    userId
+    userId,
+    contractAddress
   } = data.campaignById;
 
   
@@ -70,10 +73,19 @@ function CampaignDetails() {
     setExpanded(!expanded);
   };
 
-  const handleFund = () => {
+  const handleFund = async () => {
     const userId = data.user.id;
-    const campaignId = data.campaignById._id;
+    const campaignId = data.campaignById._id; 
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner(); 
+    const contract = new ethers.Contract(
+      contractAddress,
+      auctionABI,
+      signer
+    );
+    console.log(ethers.utils.parseEther(fundingAmnt), equity);
 
+    await contract.saveBid(equity, {value: ethers.utils.parseEther(fundingAmnt)});
     dispatch(bidCampaign({ userId, campaignId, fundingAmnt, equity }));
   };
 
