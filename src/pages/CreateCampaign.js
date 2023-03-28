@@ -1,11 +1,26 @@
 import { LoadingButton } from '@mui/lab';
+import { useDispatch, useSelector } from 'react-redux';
 import { Grid, Button, Container, Stack, Typography, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useDispatch, useSelector } from 'react-redux';
+import { Helmet } from 'react-helmet-async'; 
+import { ethers } from 'ethers';
 import { createCampaign } from '../redux/actions';
 import CustomInput from '../components/customInput/CustomInput';
-import Iconify from '../components/iconify';
+import Iconify from '../components/iconify'; 
+import { auctionFactoryABI } from './exportAbi';
+
+const AFAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3';
+
+function listenForTransactionMine(transactionResponse, provider) {
+  return new Promise((resolve, reject) => {
+    console.log(`Mining ${transactionResponse.hash}...`);
+    provider.once(transactionResponse.hash, (transactionreceipt) => {
+      console.log(`Completed with ${transactionreceipt.confirmations}.`);
+      resolve();
+    })
+  })
+}
+
 
 function CreateCampaign() {
   const [title, settitle] = useState('');
@@ -26,6 +41,11 @@ function CreateCampaign() {
   
 
   useEffect(() => {
+    if(window.ethereum) {
+      window.ethereum.request({method: 'eth_requestAccounts'}).then(result => {
+        console.log(result[0]);
+      });
+    }
     const milestoneList = [];
 
     for (let i = 0; i < numofmilestone; i += 1) {
@@ -68,28 +88,74 @@ function CreateCampaign() {
   
   };
 
-  const handleSubmit = () => {
-    const payload = {
-      userId:data.user.id,
-      title,
-      description,
-      imageURL,
-      amountToRaise,
-      deadlineToBid,
-      deadlineOfProject,
-      projectBuildersRequired,      
-      minAmountToRelease,
-      minAmountToFund,
-      maxEquityToDilute,
-      milestones,
-    };
+  const handleSubmit = async () => {
+    
+    // uint256[] memory milestoneDeadlines,
+    // uint256 targetAmount,
+    // uint256[] memory milestoneFunds,
+    // uint256 duration,
+    // uint256 numberOfMilestones,
+    // uint256 minimumAmount,
+    // uint256 campaignDeadline 
+    const milestoneDeadlines = [];
+    const milestoneFunds = [];
+    const bidDeadline = new Date(deadlineToBid);
+    const epochBidDeadline = (bidDeadline.getTime() - bidDeadline.getMilliseconds()) / 1000;
+    const campaignDeadline = new Date(deadlineOfProject);
+    const epochCampaignDeadline = (campaignDeadline.getTime() - campaignDeadline.getMilliseconds()) / 1000;
+    const numberOfMilestones = milestones.length
+    
+    for(let i = 0; i < milestones.length; i+=1) {
+      const date = `${milestones[i].deadlineToBid}:00`;
+      const d = new Date(date); 
+      const epochD = (d.getTime() - d.getMilliseconds()) / 1000;
+      milestoneDeadlines.push(epochD);
+      milestoneFunds.push(ethers.utils.parseEther(milestones[i].fundsRequired));
+    }
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(AFAddress, auctionFactoryABI, signer);
+    console.log('hiii')
+    console.log(milestoneDeadlines,
+      ethers.utils.parseEther(amountToRaise),
+      milestoneFunds,
+      epochBidDeadline,
+      numberOfMilestones,
+      ethers.utils.parseEther(minAmountToFund),
+      epochCampaignDeadline)
+      const contractResponse = await contract.createAuction(
+        milestoneDeadlines,
+        ethers.utils.parseEther(amountToRaise),
+        milestoneFunds,
+        epochBidDeadline,
+        numberOfMilestones,
+        ethers.utils.parseEther(minAmountToFund),
+        epochCampaignDeadline
+        );
+        await listenForTransactionMine(contractResponse, provider);
+        const contractAddressHere = await contract.getTheLatestAuction();
 
-    dispatch(createCampaign(payload));
-    console.log("payload ", payload);    
-  };
-
-  return (
-    <>
+        const payload = {
+          userId:data.user.id,
+          title,
+          description,
+          imageURL,
+          amountToRaise,
+          deadlineToBid,
+          deadlineOfProject,
+          projectBuildersRequired,      
+          minAmountToRelease,
+          minAmountToFund,
+          maxEquityToDilute,
+          milestones,
+          contractAddress:contractAddressHere.toString()
+        }; 
+        dispatch(createCampaign(payload));
+        console.log("payload ", payload);  
+      };
+      
+      return (
+        <>
       <Helmet>
         <title>Create Campaign</title>
       </Helmet>
