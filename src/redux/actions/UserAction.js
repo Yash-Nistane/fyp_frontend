@@ -28,7 +28,7 @@ export const createCampaign = (payload) => {
     try {
       // console.log('hey here is yash', payload);
       const res = axios.post('/postNewCampaign', { payload });
-
+      console.log(res);
       if (res.status === 200) {
         console.log(res);
       }

@@ -84,21 +84,8 @@ function CreateCampaign() {
       milestones,
     };
 
-    // dispatch(createCampaign(payload));
-    console.log("payload ", payload);
-
-    const date1 = new Date(deadlineToBid);
-    const date2 = new Date(deadlineOfProject);
-    console.log(date1);
-    console.log(date2);
-
-    if(date2 > date1){
-      console.log("true");
-    }
-    else{
-      console.log("false");
-    }
-    
+    dispatch(createCampaign(payload));
+    console.log("payload ", payload);    
   };
 
   return (
