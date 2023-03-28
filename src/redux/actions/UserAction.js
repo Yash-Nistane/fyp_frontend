@@ -41,7 +41,7 @@ export const createCampaign = (payload) => {
 export const getAllCampaigns = ({userId}) => {
   return async (dispatch) => {
     try {
-      const res = await axios.post('/getAllCampaigns',userId);
+      const res = await axios.post('/getAllCampaigns',{userId});
       if (res.status === 200) {
         // console.log(res);
         dispatch({
