@@ -59,9 +59,10 @@ function CampaignDetails() {
     milestones,
     userId
   } = data.campaignById;
+ 
+  const myproject = userId ? data.user.id === userId._id : false;
 
-  
-
+  console.log(myproject);
   useEffect(() => {
     dispatch(getCampaignById({ cid }));
   }, []);
@@ -76,6 +77,10 @@ function CampaignDetails() {
 
     dispatch(bidCampaign({ userId, campaignId, fundingAmnt, equity }));
   };
+
+  const handleEndAuction = () => {
+
+  }
 
   return (
     <>
@@ -99,7 +104,7 @@ function CampaignDetails() {
                   </IconButton>
                 }
                 title={title}
-                subheader={`${userId ? userId.firstName : "" } ${userId ? userId.lastName : ""}`}
+                subheader={`${userId ? userId.firstName : " " } ${userId ? userId.lastName : " "}`}
                 sx={{ mb: '1rem', fontWeight: 'lighter' }}
               />
               <CardMedia component="img" height="300" image={imageURL} alt="Paella dish" />
@@ -169,30 +174,39 @@ function CampaignDetails() {
                       ))
                     : null}
 
-                  <Grid container spacing={4} sx={{ mt: '2rem' }}>
-                    <Grid item md={4}>
-                      <CustomInput
-                        type="number"
-                        label="Enter amount"
-                        value={fundingAmnt}
-                        onChange={(e) => setfundingAmnt(e.target.value)}
-                      />
+                    {
+                      myproject ? 
+                      <LoadingButton  size="large" type="submit" variant="contained" onClick={handleEndAuction}>
+                        End Auction
+                      </LoadingButton> : 
+                      
+                      <Grid container spacing={4} sx={{ mt: '2rem' }}>
+                      <Grid item md={4}>
+                        <CustomInput
+                          type="number"
+                          label="Enter amount"
+                          value={fundingAmnt}
+                          onChange={(e) => setfundingAmnt(e.target.value)}
+                        />
+                      </Grid>
+                      <Grid item md={4}>
+                        <CustomInput
+                          type="number"
+                          label="Equity ask"
+                          value={equity}
+                          onChange={(e) => setequity(e.target.value)}
+                        />
+                      </Grid>
+  
+                      <Grid item md={4}>
+                        <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleFund}>
+                          Fund
+                        </LoadingButton>
+                      </Grid>
                     </Grid>
-                    <Grid item md={4}>
-                      <CustomInput
-                        type="number"
-                        label="Equity ask"
-                        value={equity}
-                        onChange={(e) => setequity(e.target.value)}
-                      />
-                    </Grid>
+                    }
 
-                    <Grid item md={4}>
-                      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleFund}>
-                        Fund
-                      </LoadingButton>
-                    </Grid>
-                  </Grid>
+                  
                 </CardContent>
               </Collapse>
             </Card>

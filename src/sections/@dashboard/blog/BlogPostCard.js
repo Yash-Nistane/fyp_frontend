@@ -59,17 +59,20 @@ BlogPostCard.propTypes = {
 };
 
 export default function BlogPostCard({ campaign, index }) {
-  const { title, dateCreated, imageURL, view, comment, share, createdAt, _id } = campaign;
+  const { title, dateCreated, imageURL, view, comment, share, createdAt, _id, userId, campaignId } = campaign;
   const navigate = useNavigate();
   const latestPostLarge = false;
   const latestPost = false;
 
   const author = {
     name: 'Yash Nistane',
-    avatarUrl: `/assets/images/avatars/avatar_${index + 1}.jpg`,
+    avatarUrl: userId ? userId.imageURL : "",
   };
 
-  const cover = imageURL;
+  const cover = campaignId ? campaignId.imageURL :imageURL;
+  const cid = campaignId ? campaignId._id : _id;
+  const ctitle = campaignId ? campaignId.title : title;
+  const cdateCreated = campaignId ? campaignId.dateCreated : dateCreated;
 
   const POST_INFO = [
     { number: 23, icon: 'eva:message-circle-fill' },
@@ -142,7 +145,7 @@ export default function BlogPostCard({ campaign, index }) {
           }}
         >
           <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
-            {dateCreated}
+            {cdateCreated}
           </Typography>
 
           <StyledTitle
@@ -159,9 +162,9 @@ export default function BlogPostCard({ campaign, index }) {
             }}
             // href={"/dashboard/campaigndetails?campaignId=12"}
             // target="_self"
-            onClick={() => {navigate(`/dashboard/campaigndetails?campaignId=${_id}`)}}
+            onClick={() => {navigate(`/dashboard/campaigndetails?campaignId=${cid}`)}}
           >
-            {title}
+            {ctitle}
           </StyledTitle>
 
           <StyledInfo>

@@ -82,10 +82,13 @@ function CreateCampaign() {
       minAmountToFund,
       maxEquityToDilute,
       milestones,
+      contractAddress:"jfdsfldj"
     };
 
+    const date1 = new Date(deadlineToBid)
     dispatch(createCampaign(payload));
-    console.log("payload ", payload);    
+    console.log("payload ", payload); 
+    console.log(date1);
   };
 
   return (
