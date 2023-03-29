@@ -78,44 +78,17 @@ function CampaignDetails() {
 
   const handleFund = async () => {
     const userId = data.user.id;
-<<<<<<< HEAD
-<<<<<<< HEAD
-    const campaignId = data.campaignById._id; 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner(); 
-    const contract = new ethers.Contract(
-      contractAddress,
-      auctionABI,
-      signer
-    );
-=======
     const campaignId = data.campaignById._id;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, auctionABI, signer);
->>>>>>> 748e5bc (end auction and approve button added)
-=======
-    const campaignId = data.campaignById._id; 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner(); 
-    const contract = new ethers.Contract(
-      contractAddress,
-      auctionABI,
-      signer
-    );
->>>>>>> 37a260c (fixed merge)
+
     console.log(ethers.utils.parseEther(fundingAmnt), equity);
 
     await contract.saveBid(equity, { value: ethers.utils.parseEther(fundingAmnt) });
     dispatch(bidCampaign({ userId, campaignId, fundingAmnt, equity }));
   };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 37a260c (fixed merge)
-=======
   const handleApprove = async() => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -138,7 +111,6 @@ function CampaignDetails() {
     await contract.endVotingSession(); 
   }
 
->>>>>>> 6cda66b (Minor Fixes)
   const handleEndAuction = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -148,38 +120,16 @@ function CampaignDetails() {
       signer
     );
     await contract.runAuction(); 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    
-=======
-    let balance = await contract.getContractBalance();
-    console.log(balance);
->>>>>>> 6cda66b (Minor Fixes)
-    const to = await contract.createCampaign();
-    // balance = await contract.getContractBalance();
-    // console.log(balance);
-    const campaignAddress = to.to; 
-
     console.log(campaignAddress);
     dispatch(addCampaignAddress({campaignId:_id, campaignAddress}));
-=======
-  const handleEndAuction = () => {};
 
-  const handleEndVoting = () => {
-
-  }
-
-  const handleApprove = () => {
-    
->>>>>>> 748e5bc (end auction and approve button added)
-=======
     
     const to = await contract.createCampaign();
 
     const campaignAddress = to.to; 
     console.log(campaignAddress);
     dispatch(addCampaignAddress({campaignId:_id, campaignAddress}));
->>>>>>> 37a260c (fixed merge)
+
   }
 
   return (
