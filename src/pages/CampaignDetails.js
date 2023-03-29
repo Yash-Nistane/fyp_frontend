@@ -22,7 +22,7 @@ import { ethers } from 'ethers';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCampaignAddress, bidCampaign, getCampaignById } from '../redux/actions';
 import CustomInput from '../components/customInput/CustomInput';
-import { auctionABI } from './exportAbi';
+import { crowdFundingABI, auctionABI } from './exportAbi';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -78,19 +78,38 @@ function CampaignDetails() {
 
   const handleFund = async () => {
     const userId = data.user.id;
-    const campaignId = data.campaignById._id; 
+    const campaignId = data.campaignById._id;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner(); 
-    const contract = new ethers.Contract(
-      contractAddress,
-      auctionABI,
-      signer
-    );
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, auctionABI, signer);
+
     console.log(ethers.utils.parseEther(fundingAmnt), equity);
 
     await contract.saveBid(equity, { value: ethers.utils.parseEther(fundingAmnt) });
     dispatch(bidCampaign({ userId, campaignId, fundingAmnt, equity }));
   };
+
+  const handleApprove = async() => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      campaignAddress,
+      crowdFundingABI,
+      signer
+    );
+    await contract.voteForMilestone(1); 
+  }
+
+  const handleEndVoting = async() => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      campaignAddress,
+      crowdFundingABI,
+      signer
+    );
+    await contract.endVotingSession(); 
+  }
 
   const handleEndAuction = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -101,13 +120,18 @@ function CampaignDetails() {
       signer
     );
     await contract.runAuction(); 
+    console.log(campaignAddress);
+    dispatch(addCampaignAddress({campaignId:_id, campaignAddress}));
+
     
     const to = await contract.createCampaign();
 
     const campaignAddress = to.to; 
     console.log(campaignAddress);
     dispatch(addCampaignAddress({campaignId:_id, campaignAddress}));
+
   }
+
 
   return (
     <>
