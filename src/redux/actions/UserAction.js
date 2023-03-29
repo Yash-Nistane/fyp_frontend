@@ -124,3 +124,15 @@ export const getCampaignById = ({ cid }) => {
       }
     }
  }
+
+ export const addCampaignAddress = ({campaignId, campaignAddress}) => {
+  return async (dispatch) => {
+    try { 
+      const res = await axios.post("/addCampaignAddress", {campaignId, campaignAddress});
+      console.log(res);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
