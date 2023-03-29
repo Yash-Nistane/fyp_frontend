@@ -22,7 +22,7 @@ import { ethers } from 'ethers';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCampaignAddress, bidCampaign, getCampaignById } from '../redux/actions';
 import CustomInput from '../components/customInput/CustomInput';
-import { auctionABI } from './exportAbi';
+import { crowdFundingABI, auctionABI } from './exportAbi';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -112,8 +112,33 @@ function CampaignDetails() {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 37a260c (fixed merge)
+=======
+  const handleApprove = async() => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      campaignAddress,
+      crowdFundingABI,
+      signer
+    );
+    await contract.voteForMilestone(1); 
+  }
+
+  const handleEndVoting = async() => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      campaignAddress,
+      crowdFundingABI,
+      signer
+    );
+    await contract.endVotingSession(); 
+  }
+
+>>>>>>> 6cda66b (Minor Fixes)
   const handleEndAuction = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -124,10 +149,17 @@ function CampaignDetails() {
     );
     await contract.runAuction(); 
 <<<<<<< HEAD
+<<<<<<< HEAD
     
+=======
+    let balance = await contract.getContractBalance();
+    console.log(balance);
+>>>>>>> 6cda66b (Minor Fixes)
     const to = await contract.createCampaign();
-
+    // balance = await contract.getContractBalance();
+    // console.log(balance);
     const campaignAddress = to.to; 
+
     console.log(campaignAddress);
     dispatch(addCampaignAddress({campaignId:_id, campaignAddress}));
 =======
