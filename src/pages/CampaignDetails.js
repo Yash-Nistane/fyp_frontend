@@ -60,9 +60,10 @@ function CampaignDetails() {
     dateCreated,
     milestones,
     userId,
-    contractAddress
+    contractAddress,
+    campaignAddress,
   } = data.campaignById;
- 
+
   const myproject = userId ? data.user.id === userId._id : false;
 
   console.log(myproject);
@@ -76,22 +77,24 @@ function CampaignDetails() {
 
   const handleFund = async () => {
     const userId = data.user.id;
-    const campaignId = data.campaignById._id; 
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner(); 
-    const contract = new ethers.Contract(
-      contractAddress,
-      auctionABI,
-      signer
-    );
+    const campaignId = data.campaignById._id;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, auctionABI, signer);
     console.log(ethers.utils.parseEther(fundingAmnt), equity);
 
-    await contract.saveBid(equity, {value: ethers.utils.parseEther(fundingAmnt)});
+    await contract.saveBid(equity, { value: ethers.utils.parseEther(fundingAmnt) });
     dispatch(bidCampaign({ userId, campaignId, fundingAmnt, equity }));
   };
 
-  const handleEndAuction = () => {
+  const handleEndAuction = () => {};
 
+  const handleEndVoting = () => {
+
+  }
+
+  const handleApprove = () => {
+    
   }
 
   return (
@@ -109,14 +112,14 @@ function CampaignDetails() {
           <Grid item md={12}>
             <Card sx={{ maxWidth: 800 }}>
               <CardHeader
-                avatar={<Avatar src={userId ? userId.imageURL : ""} aria-label="recipe" />}
+                avatar={<Avatar src={userId ? userId.imageURL : ''} aria-label="recipe" />}
                 action={
                   <IconButton aria-label="settings">
                     <MoreVertIcon />
                   </IconButton>
                 }
                 title={title}
-                subheader={`${userId ? userId.firstName : " " } ${userId ? userId.lastName : " "}`}
+                subheader={`${userId ? userId.firstName : ' '} ${userId ? userId.lastName : ' '}`}
                 sx={{ mb: '1rem', fontWeight: 'lighter' }}
               />
               <CardMedia component="img" height="300" image={imageURL} alt="Paella dish" />
@@ -182,17 +185,30 @@ function CampaignDetails() {
                           <Typography mb={3} variant="body2">
                             Deadline : {milestone.deadlineToComplete}
                           </Typography>
+
+                          {myproject ? null : (
+                            <LoadingButton size="large" type="submit" variant="contained" onClick={handleApprove}>
+                              Approve
+                            </LoadingButton>
+                          )}
                         </>
                       ))
                     : null}
 
-                    {
-                      myproject ? 
-                      <LoadingButton  size="large" type="submit" variant="contained" onClick={handleEndAuction}>
-                        End Auction
-                      </LoadingButton> : 
-                      
-                      <Grid container spacing={4} sx={{ mt: '2rem' }}>
+                  {myproject ? (
+                    campaignAddress ? (
+                      <LoadingButton size="large" type="submit" variant="contained" onClick={handleEndVoting}>
+                        End Voting
+                      </LoadingButton>
+                    ) : (
+                      <>
+                        <LoadingButton size="large" type="submit" variant="contained" onClick={handleEndAuction}>
+                          End Auction
+                        </LoadingButton>
+                      </>
+                    )
+                  ) : (
+                    <Grid container spacing={4} sx={{ mt: '2rem' }}>
                       <Grid item md={4}>
                         <CustomInput
                           type="number"
@@ -209,16 +225,14 @@ function CampaignDetails() {
                           onChange={(e) => setequity(e.target.value)}
                         />
                       </Grid>
-  
+
                       <Grid item md={4}>
                         <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleFund}>
                           Fund
                         </LoadingButton>
                       </Grid>
                     </Grid>
-                    }
-
-                  
+                  )}
                 </CardContent>
               </Collapse>
             </Card>
