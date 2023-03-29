@@ -20,7 +20,7 @@ import { Helmet } from 'react-helmet-async';
 import { Container, Grid } from '@mui/material';
 import { ethers } from 'ethers';
 import { useDispatch, useSelector } from 'react-redux';
-import { bidCampaign, getCampaignById } from '../redux/actions';
+import { addCampaignAddress, bidCampaign, getCampaignById } from '../redux/actions';
 import CustomInput from '../components/customInput/CustomInput';
 import { auctionABI } from './exportAbi';
 
@@ -49,6 +49,7 @@ function CampaignDetails() {
   const dispatch = useDispatch();
 
   const {
+    _id,
     title,
     description,
     imageURL,
@@ -77,7 +78,7 @@ function CampaignDetails() {
   const handleFund = async () => {
     const userId = data.user.id;
     const campaignId = data.campaignById._id; 
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner(); 
     const contract = new ethers.Contract(
       contractAddress,
@@ -90,8 +91,21 @@ function CampaignDetails() {
     dispatch(bidCampaign({ userId, campaignId, fundingAmnt, equity }));
   };
 
-  const handleEndAuction = () => {
+  const handleEndAuction = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      contractAddress,
+      auctionABI,
+      signer
+    );
+    await contract.runAuction(); 
+    
+    const to = await contract.createCampaign();
 
+    const campaignAddress = to.to; 
+    console.log(campaignAddress);
+    dispatch(addCampaignAddress({campaignId:_id, campaignAddress}));
   }
 
   return (

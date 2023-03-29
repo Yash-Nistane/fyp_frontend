@@ -20,7 +20,7 @@ export default function LoginForm() {
 
   const handleClick = () => {
     dispatch(login({
-        email : "yash@gmail.com",
+        email : "xyz@gmail.com",
         password : "12345"
     }));
     navigate('/dashboard', { replace: true });
