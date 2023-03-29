@@ -79,6 +79,7 @@ function CampaignDetails() {
   const handleFund = async () => {
     const userId = data.user.id;
 <<<<<<< HEAD
+<<<<<<< HEAD
     const campaignId = data.campaignById._id; 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner(); 
@@ -93,6 +94,16 @@ function CampaignDetails() {
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, auctionABI, signer);
 >>>>>>> 748e5bc (end auction and approve button added)
+=======
+    const campaignId = data.campaignById._id; 
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner(); 
+    const contract = new ethers.Contract(
+      contractAddress,
+      auctionABI,
+      signer
+    );
+>>>>>>> 37a260c (fixed merge)
     console.log(ethers.utils.parseEther(fundingAmnt), equity);
 
     await contract.saveBid(equity, { value: ethers.utils.parseEther(fundingAmnt) });
@@ -100,6 +111,9 @@ function CampaignDetails() {
   };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 37a260c (fixed merge)
   const handleEndAuction = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -109,6 +123,7 @@ function CampaignDetails() {
       signer
     );
     await contract.runAuction(); 
+<<<<<<< HEAD
     
     const to = await contract.createCampaign();
 
@@ -125,6 +140,14 @@ function CampaignDetails() {
   const handleApprove = () => {
     
 >>>>>>> 748e5bc (end auction and approve button added)
+=======
+    
+    const to = await contract.createCampaign();
+
+    const campaignAddress = to.to; 
+    console.log(campaignAddress);
+    dispatch(addCampaignAddress({campaignId:_id, campaignAddress}));
+>>>>>>> 37a260c (fixed merge)
   }
 
   return (
