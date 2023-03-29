@@ -11,27 +11,28 @@ import { login } from '../../../redux/actions';
 import Iconify from '../../../components/iconify';
 // ----------------------------------------------------------------------
 
-
 export default function LoginForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setemail] = useState('');
+  const [password, setpassword] = useState('');
   const dispatch = useDispatch();
 
   const handleClick = () => {
-    dispatch(login({
-        email : "yash@gmail.com",
-        password : "12345"
-    }));
+    dispatch(
+      login({
+        email,
+        password,
+      })
+    );
     navigate('/dashboard', { replace: true });
   };
-
-  
 
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField name="email" label="Email address" value={email} onChange={(e) => setemail(e.target.value)} />
 
         <TextField
           name="password"
@@ -46,6 +47,8 @@ export default function LoginForm() {
               </InputAdornment>
             ),
           }}
+          value={password}
+          onChange={(e) => setpassword(e.target.value)}
         />
       </Stack>
 
