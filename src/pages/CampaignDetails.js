@@ -64,6 +64,7 @@ function CampaignDetails() {
     maxEquityToDilute,
     dateCreated,
     milestones,
+    milestoneDetails,
     userDetails,
     contractAddress,
     campaignAddress,
@@ -200,8 +201,8 @@ function CampaignDetails() {
                     Deadline to bid : 20 March 2024
                   </Typography>
 
-                  {milestones
-                    ? milestones.map((milestone, index) => (
+                  {milestoneDetails
+                    ? milestoneDetails.map((milestone, index) => (
                         <>
                           <hr />
                           <Typography paragraph variant="subtitle1" mt={3}>
