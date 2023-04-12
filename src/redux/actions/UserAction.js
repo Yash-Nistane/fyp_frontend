@@ -89,16 +89,16 @@ export const getMyFundedCampaigns = ({userId}) => {
   }
 }
 
-export const getCampaignById = ({ cid }) => {
+export const getCampaignById = ({ cid, userId }) => {
   return async (dispatch) => {
     try {
       console.log(cid);
-      const res = await axios.post('/getCampaign', { campaignID: cid });
+      const res = await axios.post('/getCampaign', { campaignId: cid, userId });
       console.log(res);
 
       if (res.status === 200) {
         const campaign = res.data.message;
-        // console.log(campaign);
+        console.log(campaign);
         dispatch({
           type: userConstants.GETCAMPAIGNBYID,
           payload: {

@@ -59,7 +59,7 @@ BlogPostCard.propTypes = {
 };
 
 export default function BlogPostCard({ campaign, index }) {
-  const { title, dateCreated, imageURL, view, comment, share, createdAt, _id, userId, campaignId } = campaign;
+  const { title, dateCreated, imageURL, view, comment, share, createdAt, _id, userId, campaignDetails } = campaign;
   const navigate = useNavigate();
   const latestPostLarge = false;
   const latestPost = false;
@@ -69,10 +69,10 @@ export default function BlogPostCard({ campaign, index }) {
     avatarUrl: userId ? userId.imageURL : "",
   };
 
-  const cover = campaignId ? campaignId.imageURL :imageURL;
-  const cid = campaignId ? campaignId._id : _id;
-  const ctitle = campaignId ? campaignId.title : title;
-  const cdateCreated = campaignId ? campaignId.dateCreated : dateCreated;
+  const cover = campaignDetails ? campaignDetails.imageURL :imageURL;
+  const cid = campaignDetails ? campaignDetails._id : _id;
+  const ctitle = campaignDetails ? campaignDetails.title : title;
+  const cdateCreated = campaignDetails ? campaignDetails.dateCreated : dateCreated;
 
   const POST_INFO = [
     { number: 23, icon: 'eva:message-circle-fill' },

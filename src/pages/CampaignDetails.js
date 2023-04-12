@@ -48,6 +48,10 @@ function CampaignDetails() {
   const cid = searchParams.get('campaignId');
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(getCampaignById({ cid, userId: "642364f2da1ea43d5cd5bfab" }));
+  }, []);
+
   const {
     _id,
     title,
@@ -60,17 +64,14 @@ function CampaignDetails() {
     maxEquityToDilute,
     dateCreated,
     milestones,
-    userId,
+    userDetails,
     contractAddress,
     campaignAddress,
   } = data.campaignById;
 
-  const myproject = userId ? data.user.id === userId._id : false;
+  const myproject = userDetails ? data.user.id === userDetails._id : false;
 
-  console.log(myproject);
-  useEffect(() => {
-    dispatch(getCampaignById({ cid }));
-  }, []);
+  console.log(myproject);  
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -148,14 +149,14 @@ function CampaignDetails() {
           <Grid item md={12}>
             <Card sx={{ maxWidth: 800 }}>
               <CardHeader
-                avatar={<Avatar src={userId ? userId.imageURL : ''} aria-label="recipe" />}
+                avatar={<Avatar src={userDetails ? userDetails.imageURL : ''} aria-label="recipe" />}
                 action={
                   <IconButton aria-label="settings">
                     <MoreVertIcon />
                   </IconButton>
                 }
                 title={title}
-                subheader={`${userId ? userId.firstName : ' '} ${userId ? userId.lastName : ' '}`}
+                subheader={`${userDetails ? userDetails.firstName : ' '} ${userDetails ? userDetails.lastName : ' '}`}
                 sx={{ mb: '1rem', fontWeight: 'lighter' }}
               />
               <CardMedia component="img" height="300" image={imageURL} alt="Paella dish" />
