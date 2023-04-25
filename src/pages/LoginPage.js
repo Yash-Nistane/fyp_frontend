@@ -46,7 +46,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Login | MoneyHive </title>
+        <title> FundIT </title>
       </Helmet>
 
       <StyledRoot>
@@ -70,7 +70,7 @@ export default function LoginPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Sign in to MoneyHive
+              Sign in to FundIT
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>
