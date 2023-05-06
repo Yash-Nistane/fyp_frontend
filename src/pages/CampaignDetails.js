@@ -11,6 +11,13 @@ import Avatar from '@mui/material/Avatar';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -20,9 +27,10 @@ import { Helmet } from 'react-helmet-async';
 import { Container, Grid } from '@mui/material';
 import { ethers } from 'ethers';
 import { useDispatch, useSelector } from 'react-redux';
-import { addCampaignAddress, bidCampaign, getCampaignById } from '../redux/actions';
+import { addCampaignAddress, bidCampaign, getCampaignById, getAuctionWinners } from '../redux/actions';
 import CustomInput from '../components/customInput/CustomInput';
 import { crowdFundingABI, auctionABI } from './exportAbi';
+
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -40,6 +48,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 function CampaignDetails() {
+  const [open, setOpen] = React.useState(false);
   const [expanded, setExpanded] = React.useState(false);
   const [fundingAmnt, setfundingAmnt] = useState(0);
   const [equity, setequity] = useState(0);
@@ -47,6 +56,14 @@ function CampaignDetails() {
   const searchParams = new URLSearchParams(window.location.search);
   const cid = searchParams.get('campaignId');
   const dispatch = useDispatch();
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     dispatch(getCampaignById({ cid, userId: "642364f2da1ea43d5cd5bfab" }));
@@ -72,7 +89,7 @@ function CampaignDetails() {
 
   const myproject = userDetails ? data.user.id === userDetails._id : false;
 
-  console.log(myproject);  
+  console.log(myproject);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -91,7 +108,7 @@ function CampaignDetails() {
     dispatch(bidCampaign({ userId, campaignId, fundingAmnt, equity }));
   };
 
-  const handleApprove = async() => {
+  const handleApprove = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contract = new ethers.Contract(
@@ -99,10 +116,10 @@ function CampaignDetails() {
       crowdFundingABI,
       signer
     );
-    await contract.voteForMilestone(1); 
+    await contract.voteForMilestone(1);
   }
 
-  const handleEndVoting = async() => {
+  const handleEndVoting = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contract = new ethers.Contract(
@@ -110,7 +127,7 @@ function CampaignDetails() {
       crowdFundingABI,
       signer
     );
-    await contract.endVotingSession(); 
+    await contract.endVotingSession();
   }
 
   const handleEndAuction = async () => {
@@ -121,17 +138,21 @@ function CampaignDetails() {
       auctionABI,
       signer
     );
-    await contract.runAuction(); 
+    await contract.runAuction();
     console.log(campaignAddress);
-    dispatch(addCampaignAddress({campaignId:_id, campaignAddress}));
+    dispatch(addCampaignAddress({ campaignId: _id, campaignAddress }));
 
-    
+
     const to = await contract.createCampaign();
 
-    const campaignAddress = to.to; 
+    const campaignAddress = to.to;
     console.log(campaignAddress);
-    dispatch(addCampaignAddress({campaignId:_id, campaignAddress}));
+    dispatch(addCampaignAddress({ campaignId: _id, campaignAddress }));
 
+  }
+
+  const handleGetWinners = async () => {
+    dispatch(getAuctionWinners({ campaignId: _id }));
   }
 
 
@@ -203,34 +224,62 @@ function CampaignDetails() {
 
                   {milestoneDetails
                     ? milestoneDetails.map((milestone, index) => (
-                        <>
-                          <hr />
-                          <Typography paragraph variant="subtitle1" mt={3}>
-                            Milestone {index + 1}
-                          </Typography>
-                          <Typography paragraph variant="body2">
-                            Title : {milestone.title}
-                          </Typography>
+                      <>
+                        <hr />
+                        <Typography paragraph variant="subtitle1" mt={3}>
+                          Milestone {index + 1}
+                        </Typography>
+                        <Typography paragraph variant="body2">
+                          Title : {milestone.title}
+                        </Typography>
 
-                          <Typography paragraph variant="body2">
-                            Description : {milestone.description}
-                          </Typography>
+                        <Typography paragraph variant="body2">
+                          Description : {milestone.description}
+                        </Typography>
 
-                          <Typography paragraph variant="body2">
-                            Funds Required : {milestone.fundsRequired}
-                          </Typography>
+                        <Typography paragraph variant="body2">
+                          Funds Required : {milestone.fundsRequired}
+                        </Typography>
 
-                          <Typography mb={3} variant="body2">
-                            Deadline : {milestone.deadlineToComplete}
-                          </Typography>
+                        <Typography mb={3} variant="body2">
+                          Deadline : {milestone.deadlineToComplete}
+                        </Typography>
 
-                          {myproject ? null : (
-                            <LoadingButton size="large" type="submit" variant="contained" onClick={handleApprove}>
-                              Approve
+                        {myproject ? (
+                          <div>
+                            <LoadingButton size="large" type="submit" variant="contained" onClick={handleClickOpen}>
+                              Upload proof
                             </LoadingButton>
-                          )}
-                        </>
-                      ))
+                            <Dialog open={open} onClose={handleClose}>
+                              <DialogTitle>Upload</DialogTitle>
+                              <DialogContent>
+                                <DialogContentText>
+                                  Upload proof for your investors. Next lot of funds will be released when majority of investors will approve this milestone.
+                                </DialogContentText>
+                                <input type="file" />
+                                {/* <TextField
+                                  autoFocus
+                                  margin="dense"
+                                  id="name"
+                                  label="Email Address"
+                                  type="email"
+                                  fullWidth
+                                  variant="standard"
+                                /> */}
+                              </DialogContent>
+                              <DialogActions>
+                                <Button onClick={handleClose}>Cancel</Button>
+                                <Button onClick={handleClose}>Submit</Button>
+                              </DialogActions>
+                            </Dialog>
+                          </div>
+                        ) : (
+                          <LoadingButton size="large" type="submit" variant="contained" onClick={handleApprove}>
+                            Approve
+                          </LoadingButton>
+                        )}
+                      </>
+                    ))
                     : null}
 
                   {myproject ? (
@@ -240,8 +289,8 @@ function CampaignDetails() {
                       </LoadingButton>
                     ) : (
                       <>
-                        <LoadingButton size="large" type="submit" variant="contained" onClick={handleEndAuction}>
-                          End Auction
+                        <LoadingButton size="large" type="submit" variant="contained" onClick={handleGetWinners}>
+                          Get auction winners
                         </LoadingButton>
                       </>
                     )

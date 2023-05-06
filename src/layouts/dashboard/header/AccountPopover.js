@@ -29,9 +29,9 @@ const MENU_OPTIONS = [
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
   const data = useSelector((state) => state.UserReducer);
-  const {email, imageURL} = data.user;
- 
-  
+  const { firstName, lastName, email, imageURL } = data.user;
+
+
 
 
   const handleOpen = (event) => {
@@ -85,7 +85,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {firstName} {lastName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {email}
